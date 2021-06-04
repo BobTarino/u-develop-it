@@ -18,12 +18,16 @@ const db = mysql.createConnection(
     },
     console.log('Connected to the election database.')
 );
-// Default response for any other request (Not Found) // make sure this is last route
+
+// This method is the key component that allows SQL commands to be written in a Node.js application
+db.query(`SELECT * FROM candidates`, (err, rows) => {
+    console.log(rows);
+  });
+
+// Default response for any other request (Not Found) // CATCHALL // make sure this is last route
 app.use((req, res) => {
     res.status(404).end();
 });
-
-
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
