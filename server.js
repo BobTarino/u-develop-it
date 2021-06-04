@@ -20,16 +20,39 @@ const db = mysql.createConnection(
 );
 
 // This method is the key component that allows SQL commands to be written in a Node.js application
-// db.query(`SELECT * FROM candidates`, (err, rows) => {
-//     console.log(rows);
-//   });
-// GET a single candidate
-// db.query(`SELECT * FROM candidates WHERE id = 1`, (err, row) => {
-//     if (err) {
-//       console.log(err);
-//     }
-//     console.log(row);
-//   });
+// Get all candidates
+app.get('/api/candidates', (req, res) => {
+    const sql = `SELECT * FROM candidates`;
+  
+    db.query(sql, (err, rows) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({
+        message: 'success',
+        data: rows
+      });
+    });
+});
+
+// Get a single candidate
+app.get('/api/candidate/:id', (req, res) => {
+    const sql = `SELECT * FROM candidates WHERE id = ?`;
+    const params = [req.params.id];
+  
+    db.query(sql, params, (err, row) => {
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+      res.json({
+        message: 'success',
+        data: row
+      });
+    });
+});
+
 // Delete a candidate
 // db.query(`DELETE FROM candidates WHERE id = ?`, 1, (err, result) => {
 //     if (err) {
@@ -37,17 +60,19 @@ const db = mysql.createConnection(
 //     }
 //     console.log(result);
 // });
-// Create a candidate
-const sql = `INSERT INTO candidates (id, first_name, last_name, industry_connected) 
-              VALUES (?,?,?,?)`;
-const params = [1, 'Ronald', 'Firbank', 1];
 
-db.query(sql, params, (err, result) => {
-  if (err) {
-    console.log(err);
-  }
-  console.log(result);
-});
+// Create a candidate
+// const sql = `INSERT INTO candidates (id, first_name, last_name, industry_connected) 
+//               VALUES (?,?,?,?)`;
+// const params = [1, 'Ronald', 'Firbank', 1];
+
+// db.query(sql, params, (err, result) => {
+//   if (err) {
+//     console.log(err);
+//   }
+//   console.log(result);
+// });
+
 // Default response for any other request (Not Found) // CATCHALL // make sure this is last route
 app.use((req, res) => {
     res.status(404).end();
